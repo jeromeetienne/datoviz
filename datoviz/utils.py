@@ -84,7 +84,7 @@ def pointer_array(
     return np_array
 
 
-def char_pointer(s: Union[str, List[str]]) -> ctypes._Pointer[c_char_p]:
+def char_pointer(s: Union[str, List[str]]) -> ctypes._Pointer:
     """
     Convert a string or list of strings to a C char pointer.
 
