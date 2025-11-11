@@ -28,7 +28,7 @@ from ._ctypes import P_, __version__, version
 # -------------------------------------------------------------------------------------------------
 
 
-def array_pointer(x: np.ndarray, dtype: np.dtype = None) -> ctypes.POINTER:
+def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes.POINTER:
     """
     Convert a NumPy array to a C pointer.
 
