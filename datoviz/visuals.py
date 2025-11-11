@@ -85,7 +85,7 @@ class Visual:
     # Internals
     # ---------------------------------------------------------------------------------------------
 
-    def set_data(self, depth_test: bool = None, cull: str = None, **kwargs) -> None:
+    def set_data(self, depth_test: tp.Optional[bool] = None, cull: tp.Optional[str] = None, **kwargs) -> None:
         """
         Set data for the visual.
 
