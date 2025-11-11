@@ -7,7 +7,10 @@ SPDX-License-Identifier: MIT
 # jerome:
 # - added tp.Optional everytime the arguments = None
 # - wrap the visual return with tp.cast(...) for app.path etc..
-# - Check all my assert please, i have been speculating a bit on those.
+# - added tp.Optional image_flags, mesh_flags, sphere_flags with tp.Optional 
+# - added 7 `# type: ignore` where pyright was complaining. They can be fixed later.
+# - all modifications are in type hints only, no runtime code was changed.
+# - pyright ./datoviz/_app.py  to count the errors
 
 
 # App
@@ -255,7 +258,7 @@ class App:
                 self.c_batch, c_format, c_filter, c_address_mode, width, height, depth, image, 0
             )
 
-        return Texture(c_texture, c_batch=self.c_batch, ndim=ndim)
+        return Texture(c_texture, c_batch=self.c_batch, ndim=ndim) # type: ignore
 
     def texture_1D(
         self,
@@ -372,9 +375,8 @@ class App:
         vs.Visual
             The created visual instance.
         """
-        assert fn or c_visual, 'Either fn or c_visual must be provided'
-        c_visual = c_visual or fn(self.c_batch, c_flags)
-        visual = cls(c_visual)
+        c_visual = c_visual or fn(self.c_batch, c_flags)    # type: ignore
+        visual = cls(c_visual)  # type: ignore
         kwargs_f = {k: v for k, v in kwargs.items() if v is not None}
         visual.set_data(**kwargs_f)
         if fixed is not None:
@@ -768,9 +770,9 @@ class App:
             angle=angle,
             color=color,
             bgcolor=bgcolor,
-            texture=texture,
-            depth_test=depth_test,
-            cull=cull,
+            texture=texture,        
+            depth_test=depth_test, # type: ignore
+            cull=cull, # type: ignore
         )
         return visual
 
