@@ -51,14 +51,14 @@ class Visual:
         The allocation function for the visual.
     """
 
-    c_visual: dvz.DvzVisual = None
+    c_visual: tp.Optional[dvz.DvzVisual] = None
     visual_name: str = ''
     count: int = 0
 
-    _prop_classes: dict = None
-    _fn_alloc: tp.Callable = None
+    _prop_classes: tp.Optional[dict] = None
+    _fn_alloc: tp.Optional[tp.Callable] = None
 
-    def __init__(self, c_visual: dvz.DvzVisual, visual_name: str = None) -> None:
+    def __init__(self, c_visual: dvz.DvzVisual, visual_name: tp.Optional[str] = None) -> None:
         """
         Initialize a Visual instance.
 
@@ -273,6 +273,7 @@ class Visual:
         count : int
             The number of elements to allocate.
         """
+        assert self._fn_alloc is not None
         self._fn_alloc(self.c_visual, count)
         self.set_count(count)
 
@@ -320,10 +321,10 @@ class Prop:
         The function to set the property.
     """
 
-    visual: Visual = None
+    visual: tp.Optional[Visual] = None
     visual_name: str = ''
     prop_name: str = ''
-    _fn: tp.Callable = None
+    _fn: tp.Optional[tp.Callable] = None
 
     def __init__(self, visual: Visual, prop_name: str) -> None:
         """
@@ -381,6 +382,7 @@ class Prop:
         int
             The size of the property.
         """
+        assert self.visual is not None
         return self.visual.get_count()
 
     @property
@@ -433,6 +435,7 @@ class Prop:
         c_flags : int, optional
             Additional flags, by default 0.
         """
+        assert self.visual is not None
         self.call(self.visual.c_visual, offset, length, pvalue, c_flags)
 
     def call(self, *args) -> tp.Any:
@@ -449,6 +452,7 @@ class Prop:
         Any
             The result of the function call.
         """
+        assert self._fn is not None
         return self._fn(*args)
 
     def allocate(self, count: int) -> None:
@@ -460,6 +464,7 @@ class Prop:
         count : int
             The number of elements to allocate.
         """
+        assert self.visual is not None
         self.visual.allocate(count)
 
     def __setitem__(self, idx: tp.Union[int, slice], value: tp.Any) -> None:
@@ -877,6 +882,7 @@ class SegmentProp(Prop):
             Additional flags, by default 0.
         """
         initial, terminal = pvalue
+        assert self.visual is not None
         self.call(self.visual.c_visual, offset, length, initial, terminal, flags)
 
 
@@ -894,7 +900,7 @@ class Segment(Visual):
         self.set_prop_class('position', SegmentProp)
 
     def set_position(
-        self, initial: np.ndarray, terminal: np.ndarray = None, offset: int = 0
+        self, initial: np.ndarray, terminal: tp.Optional[np.ndarray] = None, offset: int = 0
     ) -> None:
         """
         Set the position of the line segments.
@@ -954,7 +960,7 @@ class Segment(Visual):
         """
         self.shift[offset:] = array
 
-    def set_cap(self, initial: str, terminal: str = None) -> None:
+    def set_cap(self, initial: str, terminal: tp.Optional[str] = None) -> None:
         """
         Set the cap of line segments:
 
@@ -1127,7 +1133,7 @@ class Glyph(Visual):
     visual_name = 'glyph'
     _af = None
 
-    def __init__(self, *args, font_size: int = None, **kwargs) -> None:
+    def __init__(self, *args, font_size: tp.Optional[int] = None, **kwargs) -> None:
         """
         Initialize a Glyph visual.
 
@@ -1148,8 +1154,8 @@ class Glyph(Visual):
     def set_strings(
         self,
         strings: List[str],
-        string_pos: np.ndarray = None,
-        scales: np.ndarray = None,
+        string_pos: tp.Optional[np.ndarray] = None,
+        scales: tp.Optional[np.ndarray] = None,
         color: tuple = cst.DEFAULT_GLYPH_COLOR,
         anchor: tuple = (0, 0),
         offset: tuple = (0, 0),
@@ -1522,7 +1528,7 @@ class Wiggle(Visual):
 
     visual_name = 'wiggle'
 
-    def set_bounds(self, xlim: tuple, ylim: tuple = None) -> None:
+    def set_bounds(self, xlim: tuple, ylim: tp.Optional[tuple] = None) -> None:
         """
         Set the bounds of the wiggle plot.
 
@@ -1535,6 +1541,7 @@ class Wiggle(Visual):
         """
         if ylim is None:
             xlim, ylim = xlim
+        assert xlim is not None and ylim is not None
         dvz.wiggle_bounds(self.c_visual, dvz.vec2(*xlim), dvz.vec2(*ylim))
 
     def set_color(
@@ -1620,7 +1627,9 @@ class MeshIndexProp(Prop):
         count : int
             The number of elements to allocate.
         """
-        self.visual.allocate(self.visual.count, count)
+        assert type(self.visual) is Mesh
+        mesh_visual= tp.cast(Mesh, self.visual)
+        mesh_visual.allocate(mesh_visual.count, count) 
 
 
 class Mesh(Visual):
@@ -1636,7 +1645,7 @@ class Mesh(Visual):
     """
 
     visual_name = 'mesh'
-    index_count: int = None
+    index_count: tp.Optional[int] = None
 
     def set_prop_classes(self) -> None:
         """
@@ -1646,9 +1655,9 @@ class Mesh(Visual):
 
     def set_data(
         self,
-        vertex_count: int = None,
-        index_count: int = None,
-        compute_normals: bool = None,
+        vertex_count: tp.Optional[int] = None,
+        index_count:  tp.Optional[int] = None,
+        compute_normals: tp.Optional[bool] = None,
         **kwargs,
     ) -> None:
         """
@@ -1686,7 +1695,7 @@ class Mesh(Visual):
 
         super().set_data(**kwargs)
 
-    def allocate(self, count: int, index_count: int = None) -> None:
+    def allocate(self, count: int, index_count: tp.Optional[int] = None) -> None:
         """
         Allocate memory for the mesh.
 
@@ -1701,7 +1710,7 @@ class Mesh(Visual):
             dvz.mesh_alloc(self.c_visual, count, index_count)
             self.set_count(count, index_count)
 
-    def set_count(self, count: int, index_count: int = None) -> None:
+    def set_count(self, count: int, index_count: tp.Optional[int] = None) -> None:
         """
         Set the number of vertices and indices in the mesh.
 
@@ -1724,6 +1733,7 @@ class Mesh(Visual):
         int
             The number of indices.
         """
+        assert self.index_count is not None
         return self.index_count
 
     def set_position(self, array: np.ndarray, offset: int = 0) -> None:
@@ -2132,7 +2142,7 @@ class Volume(Visual):
 
     visual_name = 'volume'
 
-    def set_bounds(self, xlim: tuple, ylim: tuple = None, zlim: tuple = None) -> None:
+    def set_bounds(self, xlim: tuple, ylim: tp.Optional[tuple] = None, zlim: tp.Optional[tuple] = None) -> None:
         """
         Set the bounds of the volume.
 
@@ -2147,6 +2157,7 @@ class Volume(Visual):
         """
         if ylim is None and zlim is None:
             xlim, ylim, zlim = xlim
+        assert xlim is not None and ylim is not None and zlim is not None
         dvz.volume_bounds(self.c_visual, dvz.vec2(*xlim), dvz.vec2(*ylim), dvz.vec2(*zlim))
 
     def set_texcoords(self, uvw0: tuple, uvw1: tuple) -> None:
