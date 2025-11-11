@@ -58,7 +58,7 @@ def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes.
 
 
 def pointer_array(
-    pointer: ctypes.POINTER, length: int, n_components: int, dtype: np.dtype = np.float32
+    pointer: ctypes.POINTER, length: int, n_components: int, dtype: np.dtype = np.dtype(np.float32)
 ) -> np.ndarray:
     """
     Convert a C pointer to a NumPy array.
@@ -368,6 +368,7 @@ def to_enum(enumstr: Union[str, int], prefixes: Optional[List] = None) -> int:
         The enum value.
     """
     if prefixes is None:
+        assert isinstance(enumstr, str)
         enumstr_u = enumstr.upper()
         if hasattr(dvz, enumstr_u):
             return getattr(dvz, enumstr_u)
@@ -405,7 +406,9 @@ def key_name(key_code: int) -> str:
     str
         The name of the key.
     """
-    return from_enum(dvz.KeyCode, key_code)
+    name = from_enum(dvz.KeyCode, key_code)
+    assert name is not None
+    return name
 
 
 def button_name(button: int) -> str:
@@ -423,6 +426,7 @@ def button_name(button: int) -> str:
         The name of the mouse button.
     """
     name = from_enum(dvz.MouseButton, button)
+    assert name is not None
     name = name.replace('DVZ_MOUSE_BUTTON_', '')
     return name
 
@@ -469,7 +473,7 @@ def cmap(
 # -------------------------------------------------------------------------------------------------
 
 
-def to_byte(arr: np.ndarray, vmin: float = None, vmax: float = None) -> np.ndarray:
+def to_byte(arr: np.ndarray, vmin: tp.Optional[float] = None, vmax: tp.Optional[float] = None) -> np.ndarray:
     """
     Normalize an array to the range [0, 255] and convert to uint8.
 
@@ -489,6 +493,7 @@ def to_byte(arr: np.ndarray, vmin: float = None, vmax: float = None) -> np.ndarr
     """
     vmin = vmin if vmin is not None else arr.min()
     vmax = vmax if vmax is not None else arr.max()
+    assert vmin is not None and vmax is not None
     assert vmin < vmax
 
     normalized = (arr - vmin) * 1.0 / (vmax - vmin)
@@ -591,7 +596,7 @@ def prepare_data_array(
     return pvalue
 
 
-def prepare_data_scalar(name: str, dtype: str, size: int, value: float) -> np.ndarray:
+def prepare_data_scalar(name: str, dtype: np.dtype, size: int, value: float) -> np.ndarray:
     """
     Prepare a scalar value for use in a visual.
 

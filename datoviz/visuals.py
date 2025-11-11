@@ -123,6 +123,7 @@ class Visual:
         prop_cls : type
             The class of the property.
         """
+        assert self._prop_classes is not None
         self._prop_classes[prop_name] = prop_cls
 
     def set_prop_classes(self) -> None:
@@ -149,6 +150,7 @@ class Visual:
             print(f'Prop type {prop_name} not found')
             return super().__getattr__(prop_name)
         if prop_type == np.ndarray:
+            assert self._prop_classes is not None
             prop_cls = self._prop_classes.get(prop_name, Prop)
             return prop_cls(self, prop_name)
         else:
@@ -174,6 +176,7 @@ class Visual:
             return super().__setattr__(prop_name, value)
 
         elif prop_type != np.ndarray:
+            assert self._prop_classes is not None
             prop_cls = self._prop_classes.get(prop_name, Prop)
             prop = prop_cls(self, prop_name)
 
@@ -1561,6 +1564,7 @@ class Wiggle(Visual):
         """
         if hasattr(negative[0], '__len__'):
             negative, positive = negative
+        assert positive is not None
         dvz.wiggle_color(self.c_visual, dvz.cvec4(*negative), dvz.cvec4(*positive))
 
     def set_edgecolor(self, value: Tuple[int, int, int, int]) -> None:
