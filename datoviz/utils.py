@@ -28,7 +28,7 @@ from ._ctypes import P_, __version__, version
 # -------------------------------------------------------------------------------------------------
 
 
-def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes.POINTER:
+def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes._Pointer:
     """
     Convert a NumPy array to a C pointer.
 
@@ -41,7 +41,7 @@ def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes.
 
     Returns
     -------
-    ctypes.POINTER
+    ctypes._Pointer
         A C pointer to the array data.
     """
     if not isinstance(x, np.ndarray):
@@ -58,14 +58,14 @@ def array_pointer(x: np.ndarray, dtype: tp.Optional[np.dtype] = None) -> ctypes.
 
 
 def pointer_array(
-    pointer: ctypes.POINTER, length: int, n_components: int, dtype: np.dtype = np.dtype(np.float32)
+    pointer: ctypes._Pointer, length: int, n_components: int, dtype: np.dtype = np.dtype(np.float32)
 ) -> np.ndarray:
     """
     Convert a C pointer to a NumPy array.
 
     Parameters
     ----------
-    pointer : ctypes.POINTER
+    pointer : ctypes._Pointer
         The C pointer to convert.
     length : int
         The length of the array.
@@ -84,7 +84,7 @@ def pointer_array(
     return np_array
 
 
-def char_pointer(s: Union[str, List[str]]) -> ctypes.POINTER:
+def char_pointer(s: Union[str, List[str]]) -> ctypes._Pointer[c_char_p]:
     """
     Convert a string or list of strings to a C char pointer.
 
@@ -95,7 +95,7 @@ def char_pointer(s: Union[str, List[str]]) -> ctypes.POINTER:
 
     Returns
     -------
-    ctypes.POINTER
+    ctypes._Pointer
         A C char pointer.
     """
     if isinstance(s, list):
@@ -103,13 +103,13 @@ def char_pointer(s: Union[str, List[str]]) -> ctypes.POINTER:
     return str(s).encode('utf-8')
 
 
-def pointer_image(rgb: ctypes.POINTER, width: int, height: int, n_channels: int = 3) -> np.ndarray:
+def pointer_image(rgb: ctypes._Pointer, width: int, height: int, n_channels: int = 3) -> np.ndarray:
     """
     Convert a C pointer to an image buffer into a NumPy array.
 
     Parameters
     ----------
-    rgb : ctypes.POINTER
+    rgb : ctypes._Pointer
         The C pointer to the image buffer.
     width : int
         The width of the image.
@@ -123,7 +123,7 @@ def pointer_image(rgb: ctypes.POINTER, width: int, height: int, n_channels: int 
     np.ndarray
         A NumPy array representing the image.
     """
-    c_ptr = ctypes.cast(rgb.value, ctypes.POINTER(ctypes.c_ubyte))
+    c_ptr = ctypes.cast(rgb.value, ctypes._Pointer(ctypes.c_ubyte))
     arr = np.ctypeslib.as_array(c_ptr, shape=(height, width, n_channels))
     return arr
 
