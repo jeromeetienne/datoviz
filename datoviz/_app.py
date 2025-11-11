@@ -4,15 +4,6 @@ Licensed under the MIT license. See LICENSE file in the project root for details
 SPDX-License-Identifier: MIT
 """
 
-# jerome:
-# - added tp.Optional everytime the arguments = None
-# - wrap the visual return with tp.cast(...) for app.path etc..
-# - added tp.Optional image_flags, mesh_flags, sphere_flags with tp.Optional 
-# - added 7 `# type: ignore` where pyright was complaining. They can be fixed later.
-# - all modifications are in type hints only, no runtime code was changed.
-# - pyright ./datoviz/_app.py  to count the errors
-
-
 # App
 
 # -------------------------------------------------------------------------------------------------
@@ -231,6 +222,7 @@ class App:
             dtype = dtype or image.dtype
             assert 0 <= image.ndim - ndim <= 1
 
+        # sanity checks
         assert n_channels is not None, 'n_channels must be specified if no image is given'
         assert shape is not None, 'shape must be specified if no image is given'
         assert dtype is not None, 'dtype must be specified if no image is given'
@@ -771,8 +763,8 @@ class App:
             color=color,
             bgcolor=bgcolor,
             texture=texture,        
-            depth_test=depth_test, # type: ignore
-            cull=cull, # type: ignore
+            depth_test=depth_test,
+            cull=cull,
         )
         return visual
 
