@@ -604,7 +604,7 @@ def prepare_data_scalar(name: str, dtype: np.dtype, size: int, value: float) -> 
     ----------
     name : str
         The name of the property.
-    dtype : str
+    dtype : np.dtype
         The data type of the scalar.
     size : int
         The size of the array to create.
