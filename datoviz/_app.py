@@ -222,14 +222,9 @@ class App:
             dtype = dtype or image.dtype
             assert 0 <= image.ndim - ndim <= 1
 
-        # sanity checks
-        assert n_channels is not None, 'n_channels must be specified if no image is given'
-        assert shape is not None, 'shape must be specified if no image is given'
-        assert dtype is not None, 'dtype must be specified if no image is given'
-
-        assert n_channels > 0
-        c_format = dtype_to_format(np.dtype(dtype).name, n_channels)
-        shape = dvz.uvec3(*shape)
+        assert n_channels > 0 # type: ignore
+        c_format = dtype_to_format(np.dtype(dtype).name, n_channels) # type: ignore
+        shape = dvz.uvec3(*shape)   # type: ignore
         width, height, depth = shape # type: ignore
 
         interpolation = interpolation or cst.DEFAULT_INTERPOLATION
@@ -693,19 +688,6 @@ class App:
         )
         return visual
 
-        # return tp.cast(vs.Path,self._visual(
-        #     dvz.path,
-        #     vs.Path,
-        #     position=position,
-        #     color=color,
-        #     linewidth=linewidth,
-        #     cap=cap,
-        #     join=join,
-        #     depth_test=depth_test,
-        #     cull=cull,
-        # ))
-
-
     def glyph(
         self,
         font_size: int = cst.DEFAULT_FONT_SIZE,
@@ -782,8 +764,8 @@ class App:
             color=color,
             bgcolor=bgcolor,
             texture=texture,        
-            depth_test=depth_test,
-            cull=cull,
+            depth_test=depth_test, # type: ignore
+            cull=cull, # type: ignore
         )
         return visual
 
