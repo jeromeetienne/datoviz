@@ -1559,7 +1559,7 @@ class Wiggle(Visual):
             The color for positive values.
         """
         if hasattr(negative[0], '__len__'):
-            negative, positive = negative
+            negative, positive = negative # type: ignore
         assert positive is not None
         dvz.wiggle_color(self.c_visual, dvz.cvec4(*negative), dvz.cvec4(*positive))
 

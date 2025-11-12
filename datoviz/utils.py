@@ -99,8 +99,8 @@ def char_pointer(s: Union[str, List[str]]) -> ctypes._Pointer:
         A C char pointer.
     """
     if isinstance(s, list):
-        return (c_char_p * len(s))(*[c_char_p(str(_).encode('utf-8')) for _ in s])
-    return str(s).encode('utf-8')
+        return (c_char_p * len(s))(*[c_char_p(str(_).encode('utf-8')) for _ in s]) # type: ignore
+    return str(s).encode('utf-8') # type: ignore
 
 
 def pointer_image(rgb: ctypes._Pointer, width: int, height: int, n_channels: int = 3) -> np.ndarray:
@@ -123,7 +123,7 @@ def pointer_image(rgb: ctypes._Pointer, width: int, height: int, n_channels: int
     np.ndarray
         A NumPy array representing the image.
     """
-    c_ptr = ctypes.cast(rgb.value, ctypes._Pointer(ctypes.c_ubyte))
+    c_ptr = ctypes.cast(rgb.value, ctypes._Pointer(ctypes.c_ubyte)) # type: ignore
     arr = np.ctypeslib.as_array(c_ptr, shape=(height, width, n_channels))
     return arr
 
