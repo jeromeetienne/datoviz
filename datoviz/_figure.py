@@ -111,7 +111,8 @@ class Figure:
 
     c_figure: tp.Optional[dvz.DvzFigure] = None
     _app: tp.Optional['App'] = None
-    colorbar: tp.Optional[Colorbar] = None
+    # FIXME colorbar is defined as a property AND as a function, name conflict
+    colorbar: tp.Optional[Colorbar] = None # type: ignore
 
     def __init__(self, c_figure: dvz.DvzFigure, app: Optional['App'] = None) -> None:
         """
@@ -235,6 +236,7 @@ class Figure:
         colorbar_panel.margins(m // 2, m // 2, m // 2, m // 2)
         return colorbar_panel
 
+    # FIXME colorbar is defined as a property AND as a function, name conflict
     def colorbar(
         self,
         cmap: str = 'hsv',
@@ -280,5 +282,6 @@ class Figure:
         """
         Destroy the figure.
         """
-        if self.c_colorbar:
-            dvz.colorbar_destroy(self.c_colorbar)
+        # FIXME self.c_colorbar doesnt exist!
+        if self.c_colorbar: # type: ignore
+            dvz.colorbar_destroy(self.c_colorbar) # type: ignore

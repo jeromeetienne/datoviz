@@ -6,6 +6,8 @@ SPDX-License-Identifier: MIT
 
 # WARNING: DO NOT EDIT: automatically-generated file
 
+# pyright: ignore-all
+
 __version__ = "0.3.3-dev"
 
 

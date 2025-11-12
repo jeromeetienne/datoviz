@@ -148,7 +148,7 @@ class Visual:
         prop_type = PROPS[self.visual_name].get(prop_name, {}).get('type', None)
         if prop_type is None:
             print(f'Prop type {prop_name} not found')
-            return super().__getattr__(prop_name)
+            return super().__getattr__(prop_name) # type: ignore
         if prop_type == np.ndarray:
             assert self._prop_classes is not None
             prop_cls = self._prop_classes.get(prop_name, Prop)
@@ -415,9 +415,9 @@ class Prop:
         if isinstance(value, list):
             return self.prepare_data(np.asanyarray(value), size)
         elif not isinstance(value, np.ndarray):
-            return prepare_data_scalar(self.name, self.dtype, size, value)
+            return prepare_data_scalar(self.name, self.dtype, size, value) # type: ignore
         else:
-            return prepare_data_array(self.name, self.dtype, self.shape, value)
+            return prepare_data_array(self.name, self.dtype, self.shape, value) # type: ignore
 
     def set(self, offset: int, length: int, pvalue: np.ndarray, c_flags: int = 0) -> None:
         """
@@ -983,8 +983,8 @@ class Segment(Visual):
         prop_info = PROPS[self.visual_name].get('cap', {})
         enum_prefix = prop_info['enum']
         enum_prefix = enum_prefix.replace('DVZ_', '')
-        initial = to_enum(f'{enum_prefix}_{initial}')
-        terminal = to_enum(f'{enum_prefix}_{terminal}')
+        initial = to_enum(f'{enum_prefix}_{initial}') # type: ignore
+        terminal = to_enum(f'{enum_prefix}_{terminal}') # type: ignore
         dvz.segment_cap(self.c_visual, initial, terminal)
 
 
@@ -1048,7 +1048,7 @@ class Path(Visual):
         assert position_concat.ndim == 2
         assert position_concat.shape[1] == 3
         position_concat = prepare_data_array(
-            self.visual_name, np.float32, (-1, 3), position_concat
+            self.visual_name, np.float32, (-1, 3), position_concat # type: ignore
         )
 
         dvz.path_alloc(self.c_visual, point_count)
