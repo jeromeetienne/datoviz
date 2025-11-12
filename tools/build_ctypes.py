@@ -23,6 +23,8 @@ SPDX-License-Identifier: MIT
 """
 
 # WARNING: DO NOT EDIT: automatically-generated file
+
+# pyright: ignore-all
 '''.lstrip()
 
 FUNCTION_CALLBACKS = dedent("""
