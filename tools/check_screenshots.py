@@ -9,7 +9,7 @@ import numpy as np
 from tqdm import tqdm
 
 SCREENSHOTS_DIR = Path('data/gallery')
-EXPECTED_SCREENSHOTS_DIR = Path('expected_gallery')
+EXPECTED_SCREENSHOTS_DIR = Path('data/expected_gallery')
 
 
 def collect_expected_screenshots()-> tp.List[Path]:
