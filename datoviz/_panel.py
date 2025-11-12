@@ -76,6 +76,7 @@ class Panel:
         assert c_panel
         self.c_panel = c_panel
         self._figure = figure
+        assert figure is not None, "You need to provide a figure when creating a panel."
         self._app = figure._app
 
     def add(self, visual: Visual) -> None:
@@ -381,6 +382,8 @@ class Panel:
             c_ref = dvz.panel_ref(self.c_panel)
             c_panzoom = dvz.panel_panzoom(self.c_panel, 0)
 
+            assert self.c_panel is not None, "Panel C object MUST NOT be None."
+
             self._axes = Axes(c_axes, c_ref, c_panzoom, self.c_panel)
         return self._axes
 
@@ -501,8 +504,8 @@ class Panel:
         """
 
         assert self._figure is not None, "You need to add a figure to the panel before calling arcball_gui()."
-        assert self._app is not None, "You need to add an app to the panel
-
+        assert self._app is not None, "You need to add an app to the panel before calling arcball_gui()."
+        
         c_figure = self._figure.c_figure
         arcball = self._arcball
         if arcball:
