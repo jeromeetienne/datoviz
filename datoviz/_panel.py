@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 import math
 from typing import TYPE_CHECKING, Optional, Tuple
+import typing as tp
 
 import numpy as np
 
@@ -46,16 +47,16 @@ class Panel:
         The figure to which the panel belongs.
     """
 
-    c_panel: dvz.DvzPanel = None
+    c_panel: tp.Optional[dvz.DvzPanel] = None
 
-    _panzoom: Panzoom = None
-    _ortho: Ortho = None
-    _arcball: Arcball = None
-    _camera: Camera = None
+    _panzoom: tp.Optional[Panzoom] = None
+    _ortho: tp.Optional[Ortho] = None
+    _arcball: tp.Optional[Arcball] = None
+    _camera: tp.Optional[Camera] = None
     _fly = None
-    _axes: Axes = None
-    _app: 'App' = None
-    _figure: 'Figure' = None
+    _axes: tp.Optional[Axes] = None
+    _app: tp.Optional['App'] = None
+    _figure: tp.Optional['Figure'] = None
 
     def __init__(
         self,
@@ -338,6 +339,10 @@ class Panel:
         period : float, optional
             Duration of one full orbit in seconds.
         """
+
+        assert self._camera is not None, "You need to add a camera to the panel before calling orbit()."
+        assert self._app is not None, "You need to add an app to the panel before calling orbit()."
+
         axis = dvz.vec3(*axis)
         center = dvz.vec3(*center)
         pos_init = dvz.vec3(*self._camera.position())
@@ -345,15 +350,17 @@ class Panel:
 
         self._camera.set(lookat=center)
 
+
         @self._app.timer(period=1 / 60, max_count=0)
         def _orbit_event(ev):
             dvz.circular_3D(pos_init, center, axis, 1 * ev.time() / period, pos)
+            assert self._camera is not None, "You need to add a camera to the panel before calling orbit()."
             self._camera.set(position=pos)
 
     # Axes
     # ---------------------------------------------------------------------------------------------
 
-    def axes(self, xlim: Tuple[float, float] = None, ylim: Tuple[float, float] = None):
+    def axes(self, xlim: tp.Optional[Tuple[float, float]] = None, ylim: tp.Optional[Tuple[float, float]] = None):
         """
         Add 2D axes to the panel.
 
@@ -440,6 +447,10 @@ class Panel:
             fixed in version 0.4.
 
         """
+
+        assert self._figure is not None, "You need to add a figure to the panel before calling gizmo()."
+        assert self._app is not None, "You need to add an app to the panel before calling gizmo()."
+
         w, h = self._figure.size()
         a = 0.25
         m = 0
@@ -488,6 +499,10 @@ class Panel:
         """
         Attach an arcball GUI to a panel.
         """
+
+        assert self._figure is not None, "You need to add a figure to the panel before calling arcball_gui()."
+        assert self._app is not None, "You need to add an app to the panel
+
         c_figure = self._figure.c_figure
         arcball = self._arcball
         if arcball:

@@ -188,11 +188,7 @@ class Visual:
                 enum_prefix = enum_prefix.replace('DVZ_', '')
                 value = to_enum(f'{enum_prefix}_{value}')
                 values = (value,)
-
-            elif prop_type == 'texture':
-                assert isinstance(value, Texture)
-                values = (value.c_tex, value.c_sampler)
-
+ 
             elif prop_type in dvz.VEC_TYPES:
                 assert hasattr(value, '__len__')
                 value = prop_type(*value)
